@@ -26,18 +26,18 @@ jobs:
     
     # Build a Docker image of your application in your registry and tag the image with the $GITHUB_SHA.
     - name: Build container image
-      # run: docker build -t ${{ secrets.REGISTRY_NAME }}/tpp:acc-login-$(echo $GITHUB_SHA | head -c7) .
-      run: docker build -t ${{ secrets.REGISTRY_NAME }}/tpp:acc-login-latest .
+      # run: docker build -t ${{ secrets.REGISTRY_NAME }}/tpp:ACC-REGISTRY-$(echo $GITHUB_SHA | head -c7) .
+      run: docker build -t ${{ secrets.REGISTRY_NAME }}/tpp:acc-registry-latest .
 
     - name: Log in to DigitalOcean Container Registry with short-lived credentials
       run: doctl registry login --expiry-seconds 1200
 
     - name: Push image to DigitalOcean Container Registry
-      run: docker push ${{ secrets.REGISTRY_NAME }}/tpp:acc-login-latest
+      run: docker push ${{ secrets.REGISTRY_NAME }}/tpp:acc-registry-latest
 
     # Deploy to DigitalOCcean Kubernetes.
     - name: Update deployment file
-      run: TAG=acc-login-latest && sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/tpp:'${TAG}'|' $GITHUB_WORKSPACE/config/deployment.yml
+      run: TAG=acc-registry-latest && sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/tpp:'${TAG}'|' $GITHUB_WORKSPACE/config/deployment.yml
 
     - name: Save DigitalOcean kubeconfig with short-lived credentials
       run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
@@ -46,5 +46,5 @@ jobs:
       run: kubectl apply -f $GITHUB_WORKSPACE/config/deployment.yml
 
     - name: Verify deployment
-      run: kubectl rollout status deployment/account-login-manager
+      run: kubectl rollout status deployment/account-registry-manager
       

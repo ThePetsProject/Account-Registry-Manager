@@ -1,4 +1,4 @@
-import { loginRoute } from './login'
+import { registerRoute } from './register'
 import { healthRoute } from './health'
 import { Router } from 'express'
 import { User } from '@database/models/user'
@@ -8,6 +8,6 @@ import { User } from '@database/models/user'
  */
 
 export const routesArray = (router: Router) => [
-  loginRoute(router, User),
+  registerRoute(router, User),
   healthRoute(router),
 ]

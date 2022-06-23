@@ -4,7 +4,7 @@ import * as healthMethods from '.'
 import projectProperties from '@utils/project_properties'
 import { Response } from 'express'
 
-const baseRoute = '/api/v1/account/login'
+const baseRoute = '/api/v1/account/register'
 const { formatTime, healthHandler } = healthMethods
 
 describe('Health route', () => {

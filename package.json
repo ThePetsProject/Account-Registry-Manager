@@ -1,7 +1,7 @@
 {
-  "name": "account-login-manager",
-  "version": "1.0.2a",
-  "description": "Account login manager for The Pets Project",
+  "name": "account-registry-manager",
+  "version": "1.0.0",
+  "description": "Account registry manager for The Pets Project",
   "main": "build/index.js",
   "namespace": "tpp",
   "scripts": {
@@ -18,7 +18,7 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ThePetsProject/Account-Login-Manager.git"
+    "url": "git+https://github.com/ThePetsProject/account-registry-Manager.git"
   },
   "author": "Javier Novoa",
   "license": "ISC",
@@ -68,7 +68,7 @@
     "typescript": "^4.6.4"
   },
   "bugs": {
-    "url": "https://github.com/ThePetsProject/Account-Login-Manager/issues"
+    "url": "https://github.com/ThePetsProject/account-registry-Manager/issues"
   },
-  "homepage": "https://github.com/ThePetsProject/Account-Login-Manager#readme"
+  "homepage": "https://github.com/ThePetsProject/account-registry-Manager#readme"
 }

@@ -28,10 +28,14 @@ const userData = {
 
 const userSchema = new Schema(userData)
 
-userSchema.methods.checkPassword = function (
-  receivedPassword: string
-): Promise<boolean> {
-  return bcrypt.compare(receivedPassword, this.password)
-}
+userSchema.pre('save', function (next) {
+  const user = this
+  const salt = bcrypt.genSaltSync(15)
+  bcrypt.hash(this.password, salt, (err, hash) => {
+    if (err) return next(err)
+    user.password = hash
+    return next()
+  })
+})
 
 export const User = mongoose.model<UserType>('User', userSchema, 'users')

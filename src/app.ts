@@ -12,6 +12,6 @@ app.use(cors())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-app.use('/api/v1/account/login', routesArray(router))
+app.use('/api/v1/account/register', routesArray(router))
 
 export default app
