@@ -1,5 +1,5 @@
 {
-  "name": "account-registry-manager",
+  "name": "account-register-manager",
   "version": "1.0.0",
   "description": "Account registry manager for The Pets Project",
   "main": "build/index.js",
@@ -18,7 +18,7 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ThePetsProject/account-registry-Manager.git"
+    "url": "git+https://github.com/ThePetsProject/account-register-Manager.git"
   },
   "author": "Javier Novoa",
   "license": "ISC",
@@ -68,7 +68,7 @@
     "typescript": "^4.6.4"
   },
   "bugs": {
-    "url": "https://github.com/ThePetsProject/account-registry-Manager/issues"
+    "url": "https://github.com/ThePetsProject/account-register-Manager/issues"
   },
-  "homepage": "https://github.com/ThePetsProject/account-registry-Manager#readme"
+  "homepage": "https://github.com/ThePetsProject/account-register-Manager#readme"
 }

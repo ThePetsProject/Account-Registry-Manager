@@ -1,36 +1,36 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: account-registry-manager-service
+  name: account-register-manager-service
   labels:
-    app: account-registry-manager-service
+    app: account-register-manager-service
 spec:
   ports:
   - port: 80
     name: http
     targetPort: 3000
   selector:
-    app: account-registry-manager
+    app: account-register-manager
 ---
 apiVersion: v1
 imagePullSecrets:
 - name: tpp-registry
 kind: ServiceAccount
 metadata:
-  name: account-registry-manager-service-account
+  name: account-register-manager-service-account
   namespace: default
 ---    
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: account-registry-manager
+  name: account-register-manager
   labels:
-    app: account-registry-manager
+    app: account-register-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: account-registry-manager
+      app: account-register-manager
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -39,36 +39,31 @@ spec:
   template:
     metadata:
       labels:
-        app: account-registry-manager
+        app: account-register-manager
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
-        vault.hashicorp.com/role: 'account-registry-manager'
-        vault.hashicorp.com/agent-inject-secret-mongostring.txt: 'kv/data/account-registry-manager/production'
+        vault.hashicorp.com/role: 'account-register-manager'
+        vault.hashicorp.com/agent-inject-secret-mongostring.txt: 'kv/data/account-register-manager/production'
         vault.hashicorp.com/agent-inject-template-mongostring.txt: |
-          {{- with secret "kv/data/account-registry-manager/production" -}}
+          {{- with secret "kv/data/account-register-manager/production" -}}
           {{ .Data.data.mongoString }}
           {{- end -}}
     spec:
-      serviceAccountName: account-registry-manager-service-account
+      serviceAccountName: account-register-manager-service-account
       containers:
-      - name: account-registry-manager
+      - name: account-register-manager
         image: <IMAGE>
         imagePullPolicy: "Always"
         env:
           - name: PORT
             value: "3000"
-          - name: MONGO_STRING_FILE_PATH
+          - name: VAULT_SECRETS_FILE_PATH
             value: /vault/secrets/
-          - name: JWT_MANAGER_URL
-            value: http://jwt-manager-service
-          - name: JWT_MANAGER_SET_PATH
-            value: api/v1/jwt
         ports:
         - containerPort: 3000
-          name: sbp-port
         resources:
           requests:
-            cpu: 200m
+            cpu: 100m
             memory: 256Mi
           limits:
             cpu: 400m
