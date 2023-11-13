@@ -1,7 +1,7 @@
 import supertest from 'supertest'
 import app from '../../../app'
 import * as registerModules from '.'
-import { User, UserType } from '../../database/models/user'
+import { CheckPasswordFnType, User, UserType } from '../../database/models/user'
 import { Request, Response } from 'express'
 
 const baseRoute = '/api/v1/account/register'
@@ -24,8 +24,14 @@ describe('Login route', () => {
 
   beforeEach(() => {
     User.findOne = jest.fn().mockResolvedValueOnce(undefined)
-    jest.spyOn(User, 'create').mockImplementation((): UserType => {
-      return new User({})
+
+    jest.spyOn(User, 'create').mockImplementation((): Promise<any> => {
+      const mockUserDocument = {
+        email: 'test@example.com',
+        password: 'password',
+        checkPassword: jest.fn() as CheckPasswordFnType,
+      }
+      return Promise.resolve(mockUserDocument as any)
     })
   })
 
@@ -63,7 +69,7 @@ describe('Login route', () => {
     } as any as Response
 
     const registerResponse = await registerHandler(User, req, res)
-    expect(registerResponse.status).toBeCalledWith(201)
+    expect(registerResponse.status).toHaveBeenCalledWith(201)
   })
 
   it('Should return 400 if Joi fails', async () => {
@@ -80,8 +86,8 @@ describe('Login route', () => {
     } as any as Response
 
     const registerResponse = await registerHandler(User, req, res)
-    expect(registerResponse.status).toBeCalledWith(400)
-    expect(registerResponse.send).toBeCalledWith({
+    expect(registerResponse.status).toHaveBeenCalledWith(400)
+    expect(registerResponse.send).toHaveBeenCalledWith({
       success: false,
       message: '"email" must be a valid email',
     })
@@ -102,16 +108,16 @@ describe('Login route', () => {
     } as any as Response
 
     const registerResponse = await registerHandler(User, req, res)
-    expect(registerResponse.status).toBeCalledWith(409)
-    expect(registerResponse.send).toBeCalledWith({
+    expect(registerResponse.status).toHaveBeenCalledWith(409)
+    expect(registerResponse.send).toHaveBeenCalledWith({
       success: false,
       message: 'User exists',
     })
   })
 
-  it('Should return 500 if save user fails', async () => {
-    const createErrorResponse = null
-    jest.spyOn(User, 'create').mockImplementation(() => createErrorResponse)
+  it('Should return 500 if save user throws error', async () => {
+    const errorMessage = 'Creation failed'
+    jest.spyOn(User, 'create').mockRejectedValue(new Error(errorMessage))
     const req = {
       body: {
         email: 'fakee@mail.com',
@@ -125,10 +131,31 @@ describe('Login route', () => {
     } as any as Response
 
     const registerResponse = await registerHandler(User, req, res)
-    expect(registerResponse.status).toBeCalledWith(500)
-    expect(registerResponse.send).toBeCalledWith({
+    expect(registerResponse.status).toHaveBeenCalledWith(500)
+    expect(registerResponse.send).toHaveBeenCalledWith({
       success: false,
-      message: createErrorResponse,
+      message: errorMessage,
+    })
+  })
+  it('Should return 500 if save user fails', async () => {
+    jest.spyOn(User, 'create').mockResolvedValue(null as any)
+    const req = {
+      body: {
+        email: 'fakee@mail.com',
+        password: 'fakepwd',
+      },
+    } as Request
+
+    const res = {
+      send: jest.fn().mockReturnThis(),
+      status: jest.fn().mockReturnThis(),
+    } as any as Response
+
+    const registerResponse = await registerHandler(User, req, res)
+    expect(registerResponse.status).toHaveBeenCalledWith(500)
+    expect(registerResponse.send).toHaveBeenCalledWith({
+      success: false,
+      message: 'User could not be created',
     })
   })
 })

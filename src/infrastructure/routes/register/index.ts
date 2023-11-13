@@ -49,23 +49,31 @@ export const registerHandler = async (
     })
   }
 
-  const savedUser = await User.create({ email, password })
+  // const savedUser = await User.create<UserType>({ email, password } as UserType)
+  return User.create<UserType>({ email, password } as UserType)
+    .then((savedUser) => {
+      if (!savedUser) {
+        console.error(
+          `[ACC-REGISTRY-MANAGER][USER_ERROR][CANT_CREATE] User ${email} could not be created: ${savedUser}`
+        )
+        throw new Error('User could not be created')
+      }
 
-  if (!savedUser) {
-    console.error(
-      `[ACC-REGISTRY-MANAGER][USER_ERROR][CANT_CREATE] User ${email} could not be created: ${savedUser}`
-    )
-    return res.status(500).send({
-      success: false,
-      message: savedUser,
+      console.info(`[ACC-REGISTRY-MANAGER][USER_CREATED]User ${email} created`)
+
+      return res.status(201).send({
+        success: true,
+      })
     })
-  }
-
-  console.info(`[ACC-REGISTRY-MANAGER][USER_CREATED]User ${email} created`)
-
-  return res.status(201).send({
-    success: true,
-  })
+    .catch((err) => {
+      console.error(
+        `[ACC-REGISTRY-MANAGER][USER_ERROR][CANT_CREATE] User ${email} could not be created: ${err.message}`
+      )
+      return res.status(500).send({
+        success: false,
+        message: err.message,
+      })
+    })
 }
 
 export const registerRoute: RegisterRouteFnType = (

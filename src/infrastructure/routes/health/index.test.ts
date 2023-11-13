@@ -51,8 +51,8 @@ describe('Health route', () => {
     }
 
     const healthResponse = healthHandler(res)
-    expect(healthResponse.status).toBeCalledWith(200)
-    expect(healthResponse.send).toBeCalledWith(expectedHealthResponse)
+    expect(healthResponse.status).toHaveBeenCalledWith(200)
+    expect(healthResponse.send).toHaveBeenCalledWith(expectedHealthResponse)
   })
 })
 
